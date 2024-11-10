@@ -1,36 +1,44 @@
-# This is a basic workflow to help you get started with Actions
+name: Lab3
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches:
+      - main
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.13'
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Install dependencies
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn matplotlib seaborn
+
+      - name: Run analysis script
+        run: python s25123.py
+
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        with:
+          name: report
+          path: |
+            extended_results_report.md
+            variable_distribution.png
+            correlation_matrix.png
+            score_distribution.png
+            score_by_gender.png
+            predicted_vs_actual.png
+            residuals_distribution.png
